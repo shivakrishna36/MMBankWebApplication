@@ -6,15 +6,25 @@
 </head>
 <body>
 <form action="AddNewSavingsAccount.mm">
-<label>Enter Name</label>
-<input type="text" name="Holdername"/><br><br>
-<label>Enter Initial Balance</label>
-<input type="number" name="accountBalance"/><br><br>
-<label>Select salaried</label>
-<input type="radio" name = "salary" value="Yes"/>Yes
-<input type="radio" name="salary" value="No"/>No<br><br>
-<input type="submit" value="submit">
-<input type="reset" value="clear">
+<table>
+	<tr>
+		<td><label>Enter Name</label></<td>
+		<td><input type="text" name="Holdername"/></td>
+	</tr>
+	<tr>
+		<td><label>Enter Initial Balance</label></td>
+		<td><input type="number" name="accountBalance"/></td>
+	</tr>
+	<tr>
+		<td><label>Select salaried</label></td>
+		<td><input type="radio" name = "salary" value="Yes"/>Yes
+		<input type="radio" name="salary" value="No"/>No</td>
+	</tr>
+	<tr>
+		<td><input type="reset" value="clear"></td>
+		<td><input type="submit" value="submit"></td>
+	</tr>
+</table>
 </form>
 </body>
 </html>
