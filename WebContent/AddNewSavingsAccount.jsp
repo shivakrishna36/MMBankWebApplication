@@ -4,11 +4,11 @@
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body>
+<body bgcolor="skyblue">
 <form action="AddNewSavingsAccount.mm">
 <table>
 	<tr>
-		<td><label>Enter Name</label></<td>
+		<td><label>Enter Name</label></td>
 		<td><input type="text" name="Holdername"/></td>
 	</tr>
 	<tr>
@@ -25,6 +25,7 @@
 		<td><input type="submit" value="submit"></td>
 	</tr>
 </table>
+<jsp:include page="exit.html"></jsp:include>
 </form>
 </body>
 </html>

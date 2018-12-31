@@ -4,13 +4,12 @@
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body>
-<form action="Deposit.mm">
+<body bgcolor="red">
+<form action="getCurrentBalance.mm">
 <label>Enter the account number :</label>
-<input type="number" name="accountNumber"><br>
-<label>Enter the amount:</label>
-<input type="number" name="amount"/>
+<input type="number" name="accountNumber">
 <input type="submit" value="OK"/>
 </form>
+<jsp:include page="exit.html"></jsp:include>
 </body>
 </html>
