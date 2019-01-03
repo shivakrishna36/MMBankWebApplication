@@ -6,6 +6,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -24,7 +28,7 @@ import com.moneymoney.exception.AccountNotFoundException;
 @WebServlet("*.mm")
 public class MMBankSavingsAccount extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	int count = 1;
   @Override
 public void init() throws ServletException {
 	super.init();  
@@ -47,7 +51,7 @@ public void init() throws ServletException {
 		PrintWriter out = response.getWriter();
 		String path = request.getServletPath();
 		System.out.println(path);
-		boolean counter = false;
+		
 	switch (path)
 	{
 	case "/addNewaccount.mm":
@@ -126,10 +130,10 @@ public void init() throws ServletException {
 		break;
 	case "/Deposit.mm":
 		int depositNumber = Integer.parseInt(request.getParameter("accountNumber"));
-		int Amount = Integer.parseInt(request.getParameter("amount"));
+		int amount1 = Integer.parseInt(request.getParameter("amount"));
 		try {
 			savingsAccount = savingsAccountService.getAccountById(depositNumber);
-			savingsAccountService.deposit(savingsAccount, Amount);
+			savingsAccountService.deposit(savingsAccount, amount1);
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,9 +166,9 @@ public void init() throws ServletException {
 		response.sendRedirect("searchAccountById.jsp");
 		break;
 	case "/searchAccountById.mm":
-		int AccountNumber = Integer.parseInt(request.getParameter("accountNumber"));
+		int accountNumber1 = Integer.parseInt(request.getParameter("accountNumber"));
 		try {
-			SavingsAccount account = savingsAccountService.getAccountById(AccountNumber);
+			SavingsAccount account = savingsAccountService.getAccountById(accountNumber1);
 			request.setAttribute("account", account);
 			RequestDispatcher dispatcher = request.getRequestDispatcher("AccountDetails.jsp");
 			dispatcher.forward(request,response);
@@ -191,9 +195,9 @@ public void init() throws ServletException {
 		response.sendRedirect("update.jsp");
 		break;
 	case "/updateAccount.mm":
-		int AccountNumber1 = Integer.parseInt(request.getParameter("accountNumber"));
+		int accountNumberSearch = Integer.parseInt(request.getParameter("accountNumber"));
 		try {
-			SavingsAccount account = savingsAccountService.getAccountById(AccountNumber1);
+			SavingsAccount account = savingsAccountService.getAccountById(accountNumberSearch);
 			request.setAttribute("account", account);
 			RequestDispatcher dispatcher = request.getRequestDispatcher("updateAccount.jsp");
 			dispatcher.forward(request,response);
@@ -203,11 +207,10 @@ public void init() throws ServletException {
 		}
 		break;
 	case "/updateDetails.mm":
-		int accountNumber1 = Integer.parseInt(request.getParameter("accountNumber"));
-		System.out.println(accountNumber1);
+		int accountNumberUpdate = Integer.parseInt(request.getParameter("accountNumber"));
 		SavingsAccount account;
 		try {
-			account = savingsAccountService.getAccountById(accountNumber1);
+			account = savingsAccountService.getAccountById(accountNumberUpdate);
 			String accountHolderName1 = request.getParameter("name");
 			boolean salary1 = request.getParameter("salary").equalsIgnoreCase("Yes")?true:false;
 			savingsAccountService.updateAccount(account,accountHolderName1,salary1);
@@ -218,35 +221,104 @@ public void init() throws ServletException {
 		}
 		break;
 	case "/sortByName.mm":
-		counter = true;
+		count++;
+		Collection<SavingsAccount> accountsName;
 		try {
-			List<SavingsAccount> accounts = savingsAccountService.sortByAccountHolderName();
-			request.setAttribute("accounts", accounts);
+			accountsName = savingsAccountService.getAllSavingsAccount();
+			ArrayList<SavingsAccount> accountsNameList = new ArrayList<SavingsAccount>(accountsName);
+			Collections.sort(accountsNameList, new Comparator<SavingsAccount>() {
+				@Override
+				public int compare(SavingsAccount arg0, SavingsAccount arg1) {
+					int result =  arg0.getBankAccount().getAccountHolderName().compareTo(arg1.getBankAccount().getAccountHolderName());
+				if(count %2 ==0)
+					return result;
+				
+				else 
+					return -result;
+				}
+			});
+			request.setAttribute("accounts", accountsNameList);
+			//request.setAttribute("accounts", accounts);
 			RequestDispatcher dispatcher = request.getRequestDispatcher("AccountDetails.jsp");
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		break;
+		
+	case "/sortByAccountNumber.mm":
+		count++;
+		Collection<SavingsAccount> accountsNumber;
+		try {
+			accountsNumber = savingsAccountService.getAllSavingsAccount();
+			ArrayList<SavingsAccount> accountsNameList = new ArrayList<SavingsAccount>(accountsNumber);
+			Collections.sort(accountsNameList, new Comparator<SavingsAccount>() {
+				@Override
+				public int compare(SavingsAccount arg0, SavingsAccount arg1) {
+					int result =  arg0.getBankAccount().getAccountNumber()- arg1.getBankAccount().getAccountNumber();
+				if(count %2 ==0)
+					return result;
+				
+				else 
+					return -result;
+				}
+			});
+			request.setAttribute("accounts", accountsNameList);
+			//request.setAttribute("accounts", accounts);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("AccountDetails.jsp");
+			dispatcher.forward(request, response);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		break;
+		
 	case "/sortByBalance.mm":
+		count ++;
+		Collection<SavingsAccount> accountsbalance;
 		try {
-			List<SavingsAccount> accounts = savingsAccountService.sortBySalary();
-			request.setAttribute("accounts", accounts);
-			RequestDispatcher dispatcher = request.getRequestDispatcher("AccountDetails.jsp");
-			dispatcher.forward(request, response);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+			accountsbalance = savingsAccountService.getAllSavingsAccount();
+			ArrayList<SavingsAccount> accountsNameList = new ArrayList<SavingsAccount>(accountsbalance);
+			Collections.sort(accountsNameList, new Comparator<SavingsAccount>() {
+				public int compare(SavingsAccount one,SavingsAccount two){
+					int result = (int) (one.getBankAccount().getAccountBalance() - two.getBankAccount().getAccountBalance());
+				if(count%2 == 0)
+					return result;
+				else
+					return -result;
+				}
+			});
+		request.setAttribute("accounts", accountsNameList);
+		//request.setAttribute("accounts", accounts);
+		RequestDispatcher dispatcher1 = request.getRequestDispatcher("AccountDetails.jsp");
+		dispatcher1.forward(request, response);
+	} catch (ClassNotFoundException | SQLException e) {
+		e.printStackTrace();
+	}
+				
 		break;
+		
 	case "/sortBySalaried.mm":
+		count ++;
+		Collection<SavingsAccount> salaried;
 		try {
-			List<SavingsAccount> accounts = savingsAccountService.sortBySalaried();
-			request.setAttribute("accounts", accounts);
-			RequestDispatcher dispatcher = request.getRequestDispatcher("AccountDetails.jsp");
-			dispatcher.forward(request, response);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+			salaried = savingsAccountService.getAllSavingsAccount();
+			ArrayList<SavingsAccount> accountsNameList = new ArrayList<SavingsAccount>(salaried);
+			Collections.sort(accountsNameList, new Comparator<SavingsAccount>() {
+				public int compare(SavingsAccount one,SavingsAccount two){
+					int result = Boolean.compare(one.isSalary(),two.isSalary());
+				if(count%2 == 0)
+					return result;
+				else
+					return -result;
+				}
+			});
+		request.setAttribute("accounts", accountsNameList);
+		//request.setAttribute("accounts", accounts);
+		RequestDispatcher dispatcher1 = request.getRequestDispatcher("AccountDetails.jsp");
+		dispatcher1.forward(request, response);
+	} catch (ClassNotFoundException | SQLException e) {
+		e.printStackTrace();
+	}
 		break;
 	}
 }

@@ -23,8 +23,8 @@
 	</tr>
 	<tr>
 		<td><label>Select salaried</label></td>
-		<td><input type="radio" name = "salary" value="${requestScope.account.salary==true?"checked":""}">Yes
-		<input type="radio" name="salary" value="${requestScope.account.salary==true?"":"checked"}">No</td>
+		<td><input type="radio" name = "salary" ${requestScope.account.salary==true?"checked":""}>Yes</td>
+		<td><input type="radio" name="salary" ${requestScope.account.salary==true?"":"checked"}>No</td>
 	</tr>
 	<tr>
 		<td><input type="reset" value="clear"></td>
